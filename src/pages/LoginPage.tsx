@@ -13,7 +13,7 @@ import React from "react";
 
 function LoginPage() {
   return (
-    <div className="flex justify-center items-center h-screen">
+    <section className="flex justify-center items-center h-screen">
       <Card className="w-full max-w-sm">
         <CardHeader>
           <CardTitle className="text-2xl">Login</CardTitle>
@@ -40,7 +40,7 @@ function LoginPage() {
           <Button className="w-full">Sign in</Button>
         </CardFooter>
       </Card>
-    </div>
+    </section>
   );
 }
 
