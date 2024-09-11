@@ -10,6 +10,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@radix-ui/react-label";
 import React from "react";
+import { Link } from "react-router-dom";
 
 function LoginPage() {
   return (
@@ -34,6 +35,15 @@ function LoginPage() {
           <div className="grid gap-2">
             <Label htmlFor="password">Password</Label>
             <Input id="password" type="password" required />
+          </div>
+          <div className="mt-4 text-center text-sm">
+            Don’t have an account?{" "}
+            <Link
+              to={"/register"}
+              className="underline text-blue-700 font-bold"
+            >
+              Sign Up here
+            </Link>
           </div>
         </CardContent>
         <CardFooter>
