@@ -25,8 +25,8 @@ function RegisterPage() {
           <div className="grid gap-4">
             <div className="grid gap-4">
               <div className="grid gap-2">
-                <Label htmlfor="first-name">Name</Label>
-                <Input id="first-name" placeholder="your full name" required />
+                <Label>Name</Label>
+                <Input id="Name" placeholder="your full name" required />
               </div>
             </div>
             <div className="grid gap-2">

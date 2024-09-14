@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/button";
+import { Button } from '@/components/ui/button';
 import {
   Card,
   CardContent,
@@ -6,40 +6,96 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@radix-ui/react-label";
-import React from "react";
-import { Link } from "react-router-dom";
-
+} from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@radix-ui/react-label';
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { login } from '../http/api';
+import { useMutation } from '@tanstack/react-query';
+import { useRef } from 'react';
+import { Skeleton } from '@/components/ui/skeleton';
+import { LoaderCircle } from 'lucide-react';
 function LoginPage() {
+  const [error, setError] = useState(null);
+
+  const [valid, setValid] = useState(true);
+
+  const navigate = useNavigate();
+  const emailRef = useRef<HTMLInputElement>(null);
+  const pRef = useRef<HTMLInputElement>(null);
+
+  const mutation = useMutation({
+    mutationFn: login,
+    onSuccess: (res) => {
+      if (res.status === 200) {
+        alert('successfully  login');
+        navigate('/');
+      } else {
+        setError(res.message);
+      }
+    },
+  });
+  const handleSubmit = () => {
+    const email = emailRef?.current?.value;
+    const password = pRef?.current?.value;
+    if (!email || !password) {
+      setError('all fields required!');
+    }
+    setError(null);
+    mutation.mutate({ email, password });
+  };
   return (
     <section className="flex justify-center items-center h-screen">
       <Card className="w-full max-w-sm">
         <CardHeader>
-          <CardTitle className="text-2xl">Login</CardTitle>
+          <CardTitle className="text-2xl text-center">Login</CardTitle>
           <CardDescription>
             Enter your email below to login to your account.
           </CardDescription>
+          {/* {mutation.isPending && (
+            <div className="flex items-center space-x-4">
+              <Skeleton className="h-12 w-12 rounded-full" />
+              <div className="space-y-2">
+                <Skeleton className="h-4 w-[250px]" />
+                <Skeleton className="h-4 w-[200px]" />
+              </div>
+            </div>
+          )} */}
+          {mutation.isError && (
+            <span className="text-red-700 text-center">
+              {mutation.error.message}
+            </span>
+          )}
+          {error && <span className="text-red-700 text-center">{error}</span>}
         </CardHeader>
         <CardContent className="grid gap-4">
           <div className="grid gap-2">
             <Label htmlFor="email">Email</Label>
             <Input
+              className={error ? `border border-red-700 ` : ''}
+              ref={emailRef}
               id="email"
               type="email"
               placeholder="m@example.com"
               required
+              onChange={() => setError(null)}
             />
           </div>
           <div className="grid gap-2">
             <Label htmlFor="password">Password</Label>
-            <Input id="password" type="password" required />
+            <Input
+              className={error ? `border border-red-700 ` : ''}
+              ref={pRef}
+              id="password"
+              type="password"
+              required
+            />
           </div>
           <div className="mt-4 text-center text-sm">
-            Don’t have an account?{" "}
+            Don’t have an account?{' '}
             <Link
-              to={"/register"}
+              to={'/register'}
               className="underline text-blue-700 font-bold"
             >
               Sign Up here
@@ -47,7 +103,13 @@ function LoginPage() {
           </div>
         </CardContent>
         <CardFooter>
-          <Button className="w-full">Sign in</Button>
+          <Button onClick={handleSubmit} className="w-full">
+            {mutation.isPending ? (
+              <LoaderCircle className="animate-spin" />
+            ) : (
+              'Sign in'
+            )}
+          </Button>
         </CardFooter>
       </Card>
     </section>
