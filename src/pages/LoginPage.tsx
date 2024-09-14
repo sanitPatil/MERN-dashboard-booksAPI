@@ -9,17 +9,14 @@ import {
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@radix-ui/react-label';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { login } from '../http/api';
 import { useMutation } from '@tanstack/react-query';
 import { useRef } from 'react';
-import { Skeleton } from '@/components/ui/skeleton';
 import { LoaderCircle } from 'lucide-react';
 function LoginPage() {
-  const [error, setError] = useState(null);
-
-  const [valid, setValid] = useState(true);
+  const [error, setError] = useState('');
 
   const navigate = useNavigate();
   const emailRef = useRef<HTMLInputElement>(null);
@@ -42,7 +39,8 @@ function LoginPage() {
     if (!email || !password) {
       setError('all fields required!');
     }
-    setError(null);
+    setError('');
+
     mutation.mutate({ email, password });
   };
   return (
@@ -79,7 +77,7 @@ function LoginPage() {
               type="email"
               placeholder="m@example.com"
               required
-              onChange={() => setError(null)}
+              onChange={() => setError('')}
             />
           </div>
           <div className="grid gap-2">
