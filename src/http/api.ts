@@ -24,4 +24,8 @@ const register = async (data: {
     .post('/api/v1/users/register', data)
     .catch((error) => error.response.data);
 
-export { login, register };
+// get all books
+const getAllBooks = async () =>
+  api.get(`/api/v1/books//get-all-books`).catch((error) => error.response.data);
+
+export { login, register, getAllBooks };

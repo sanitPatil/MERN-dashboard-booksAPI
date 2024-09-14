@@ -20,21 +20,19 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
 import { Sheet, SheetTrigger } from '@/components/ui/sheet';
-import { Link, Navigate } from 'react-router-dom';
+import { Link, Navigate, Outlet } from 'react-router-dom';
 import { link } from 'fs';
 import { useTokenStore } from '@/store/Store';
 function Dashboard() {
   const { token, setToken } = useTokenStore((state) => state);
 
+  if (!token) return <Navigate to={'/login'} replace />;
   return (
     <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
       <div className="hidden border-r bg-muted/40 md:block">
         <div className="flex h-full max-h-screen flex-col gap-2">
           <div className="flex h-14 items-center border-b px-4 lg:h-[60px] lg:px-6">
-            <Link
-              to={`/home/dashboard`}
-              className="flex items-center gap-2 font-semibold"
-            >
+            <Link to={`/`} className="flex items-center gap-2 font-semibold">
               <Package2 className="h-6 w-6" />
               <span className="">coder's book shop</span>
             </Link>
@@ -46,14 +44,15 @@ function Dashboard() {
           <div className="flex-1">
             <nav className="grid items-start px-2 text-sm font-medium lg:px-4">
               <Link
-                to={`/home/dashboard`}
+                to={`/home`}
                 className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
               >
                 <Home className="h-4 w-4" />
-                Dashboard
+                Home
               </Link>
+
               <Link
-                to={`/home/dashboard`}
+                to={`/books`}
                 className="flex items-center gap-3 rounded-lg bg-muted px-3 py-2 text-primary transition-all hover:text-primary"
               >
                 <Package className="h-4 w-4" />
@@ -110,24 +109,8 @@ function Dashboard() {
             </DropdownMenuContent>
           </DropdownMenu>
         </header>
-        <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
-          <div className="flex items-center">
-            <h1 className="text-lg font-semibold md:text-2xl">Inventory</h1>
-          </div>
-          <div
-            className="flex flex-1 items-center justify-center rounded-lg border border-dashed shadow-sm"
-            x-chunk="dashboard-02-chunk-1"
-          >
-            <div className="flex flex-col items-center gap-1 text-center">
-              <h3 className="text-2xl font-bold tracking-tight">
-                You have no books
-              </h3>
-              <p className="text-sm text-muted-foreground">
-                You can start selling as soon as you add a books.
-              </p>
-              <Button className="mt-4">Add Product</Button>
-            </div>
-          </div>
+        <main className="p-2">
+          <Outlet />
         </main>
       </div>
     </div>

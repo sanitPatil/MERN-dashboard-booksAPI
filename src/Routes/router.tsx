@@ -1,34 +1,33 @@
 import AuthLayout from '@/layout/AuthLayout';
-import Dashboard from '@/layout/Dashboard';
-import HomePage from '@/pages/HomePage';
 import LoginPage from '@/pages/LoginPage';
 import RegisterPage from '@/pages/RegisterPage';
 import { createBrowserRouter } from 'react-router-dom';
-
+import HomePage from '@/pages/HomePage';
+import Books from '@/pages/Books';
+import AddBook from '@/pages/AddBook';
+import Dashboard from '@/layout/Dashboard';
 const router = createBrowserRouter([
   {
     path: '/',
-    element: <HomePage />,
+    element: <Dashboard />,
     children: [
       {
-        path: '/home/dashboard',
+        path: '/home',
         element: (
           <AuthLayout>
-            <Dashboard />,
+            <HomePage />
+          </AuthLayout>
+        ),
+      },
+      {
+        path: '/books',
+        element: (
+          <AuthLayout>
+            <Books />
           </AuthLayout>
         ),
       },
     ],
-    // children: [
-    //   {
-    //     path: "/login",
-    //     element: <LoginPage />,
-    //   },
-    //   {
-    //     path: "/register",
-    //     element: <RegisterPage />,
-    //   },
-    // ],
   },
   {
     path: '/login',
@@ -39,5 +38,4 @@ const router = createBrowserRouter([
     element: <RegisterPage />,
   },
 ]);
-
 export default router;
