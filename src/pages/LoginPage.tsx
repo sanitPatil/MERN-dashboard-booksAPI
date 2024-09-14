@@ -15,18 +15,20 @@ import { login } from '../http/api';
 import { useMutation } from '@tanstack/react-query';
 import { useRef } from 'react';
 import { LoaderCircle } from 'lucide-react';
+import { useTokenStore } from '@/store/Store';
 function LoginPage() {
   const [error, setError] = useState('');
 
   const navigate = useNavigate();
   const emailRef = useRef<HTMLInputElement>(null);
   const pRef = useRef<HTMLInputElement>(null);
-
+  const setToken = useTokenStore((state) => state.setToken);
   const mutation = useMutation({
     mutationFn: login,
     onSuccess: (res) => {
       if (res.status === 200) {
         alert('successfully  login');
+        setToken(res.data.accessToken);
         navigate('/');
       } else {
         setError(res.message);

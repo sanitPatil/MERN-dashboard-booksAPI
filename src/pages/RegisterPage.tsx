@@ -10,6 +10,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { register } from '@/http/api';
 import { useMutation } from '@tanstack/react-query';
+import { LoaderCircle } from 'lucide-react';
 import { useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 function RegisterPage() {
@@ -26,7 +27,7 @@ function RegisterPage() {
     onSuccess: (res) => {
       if (res.status === 201) {
         alert('successfully register...');
-        navigate('/');
+        navigate('/login');
       } else {
         setError(res.message);
       }
@@ -94,7 +95,11 @@ function RegisterPage() {
               />
             </div>
             <Button onClick={handleSubmit} type="submit" className="w-full">
-              Create an account
+              {mutation.isPending ? (
+                <LoaderCircle className="animate-spin" />
+              ) : (
+                'Create an account'
+              )}
             </Button>
           </div>
           <div className="mt-4 text-center text-sm">
