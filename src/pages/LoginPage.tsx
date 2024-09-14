@@ -22,14 +22,14 @@ function LoginPage() {
   const navigate = useNavigate();
   const emailRef = useRef<HTMLInputElement>(null);
   const pRef = useRef<HTMLInputElement>(null);
-  const setToken = useTokenStore((state) => state.setToken);
+  const { setToken } = useTokenStore((state) => state);
   const mutation = useMutation({
     mutationFn: login,
     onSuccess: (res) => {
       if (res.status === 200) {
         alert('successfully  login');
         setToken(res.data.accessToken);
-        navigate('/');
+        navigate('/home/dashboard');
       } else {
         setError(res.message);
       }
