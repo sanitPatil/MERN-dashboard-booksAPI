@@ -1,5 +1,16 @@
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import {
   DropdownMenu,
@@ -17,7 +28,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { CirclePlus, MoreHorizontal } from 'lucide-react';
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -26,9 +37,10 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb';
-import { useQuery } from '@tanstack/react-query';
-import { getAllBooks } from '@/http/api';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { deleteBook, getAllBooks } from '@/http/api';
 import { Link } from 'react-router-dom';
+import { Skeleton } from '@/components/ui/skeleton';
 export interface Book {
   _id: string;
   title: string;
@@ -51,17 +63,46 @@ function Books() {
   const books = data?.data?.bookRes;
   //console.log(books);
 
+  // dialog alert
+  const [isOpen, setIsOpen] = useState(false);
+
+  const closeDialog = () => setIsOpen(false);
+
+  const queryClient = useQueryClient();
+  const mutation = useMutation({
+    mutationFn: deleteBook,
+    onSuccess: (res) => {
+      console.log(res);
+
+      if (res.status === 204) {
+        queryClient.invalidateQueries({ queryKey: ['books'] });
+        console.log('bookDeleted SuccessFully');
+      }
+    },
+    onError: (error, context) => {
+      console.log(error, ' ', context);
+    },
+  });
+
+  const handleDelete = (bookId: string) => {
+    if (!bookId) {
+      return console.log('id required');
+    }
+    //console.log(bookId);
+
+    mutation.mutate(bookId);
+  };
   return (
     <div>
       <div className="flex justify-between p-2">
         <Breadcrumb className="">
           <BreadcrumbList>
             <BreadcrumbItem>
-              <BreadcrumbLink href="/home">Home</BreadcrumbLink>
+              <BreadcrumbLink href="/dashboard">Home</BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
-              <BreadcrumbLink href="/">Dashboard</BreadcrumbLink>
+              <BreadcrumbLink href="/dashboard">Dashboard</BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
@@ -138,7 +179,41 @@ function Books() {
                         <DropdownMenuContent align="end">
                           <DropdownMenuLabel>Actions</DropdownMenuLabel>
                           <DropdownMenuItem>Edit</DropdownMenuItem>
-                          <DropdownMenuItem>Delete</DropdownMenuItem>
+                          <DropdownMenuItem
+                            onSelect={(e) => e.preventDefault()}
+                          >
+                            <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
+                              <AlertDialogTrigger asChild>
+                                <span onClick={() => setIsOpen(true)}>
+                                  Delete
+                                </span>
+                              </AlertDialogTrigger>
+                              <AlertDialogContent>
+                                <AlertDialogHeader>
+                                  <AlertDialogTitle>
+                                    Are you absolutely sure?
+                                  </AlertDialogTitle>
+                                  <AlertDialogDescription>
+                                    This action cannot be undone. This will
+                                    permanently delete your book from server.
+                                  </AlertDialogDescription>
+                                </AlertDialogHeader>
+                                <AlertDialogFooter>
+                                  <AlertDialogCancel onClick={closeDialog}>
+                                    Cancel
+                                  </AlertDialogCancel>
+                                  <AlertDialogAction
+                                    onClick={() => {
+                                      handleDelete(book._id);
+                                      closeDialog();
+                                    }}
+                                  >
+                                    Continue
+                                  </AlertDialogAction>
+                                </AlertDialogFooter>
+                              </AlertDialogContent>
+                            </AlertDialog>
+                          </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
                     </TableCell>

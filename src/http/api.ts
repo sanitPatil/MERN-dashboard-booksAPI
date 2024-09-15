@@ -49,4 +49,8 @@ const addBook = async (data: FormData) =>
       'Content-Type': 'multipart/form-data',
     },
   });
-export { login, register, getAllBooks, addBook };
+
+const deleteBook = async (bookId: string) =>
+  api.delete(`api/v1/books/delete-book/${bookId}`).catch((err) => err);
+
+export { login, register, getAllBooks, addBook, deleteBook };
