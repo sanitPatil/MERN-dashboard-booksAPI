@@ -29,7 +29,7 @@ function LoginPage() {
       if (res.status === 200) {
         alert('successfully  login');
         setToken(res.data.accessToken);
-        navigate('/');
+        navigate('/dashboard/home');
       } else {
         setError(res.message);
       }

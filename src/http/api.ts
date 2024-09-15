@@ -1,3 +1,4 @@
+import { useTokenStore } from '@/store/Store';
 import axios from 'axios';
 
 const api = axios.create({
@@ -5,6 +6,16 @@ const api = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
+});
+
+// interceptor
+api.interceptors.request.use((config) => {
+  const token = useTokenStore.getState().token;
+
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
 });
 
 // login
@@ -28,4 +39,14 @@ const register = async (data: {
 const getAllBooks = async () =>
   api.get(`/api/v1/books//get-all-books`).catch((error) => error.response.data);
 
-export { login, register, getAllBooks };
+//
+// create books
+
+//
+const addBook = async (data: FormData) =>
+  api.post('/api/v1/books/create-book', data, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
+export { login, register, getAllBooks, addBook };

@@ -16,23 +16,67 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { MoreHorizontal } from 'lucide-react';
+import { CirclePlus, MoreHorizontal } from 'lucide-react';
 import React from 'react';
-
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from '@/components/ui/breadcrumb';
 import { useQuery } from '@tanstack/react-query';
 import { getAllBooks } from '@/http/api';
+import { Link } from 'react-router-dom';
+export interface Book {
+  _id: string;
+  title: string;
+  description: string;
+  author: string;
+  coverImage: string;
+  file: string;
+  updatedAt: string;
+  createdAt: string;
+  genre: string;
+}
 function Books() {
   const { data } = useQuery({
     queryKey: ['books'],
     queryFn: getAllBooks,
+    staleTime: 10000,
   });
 
   //console.log(data?.data?.bookRes);
   const books = data?.data?.bookRes;
-  console.log(books);
+  //console.log(books);
 
   return (
     <div>
+      <div className="flex justify-between p-2">
+        <Breadcrumb className="">
+          <BreadcrumbList>
+            <BreadcrumbItem>
+              <BreadcrumbLink href="/home">Home</BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbLink href="/">Dashboard</BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbPage>All Books</BreadcrumbPage>
+            </BreadcrumbItem>
+          </BreadcrumbList>
+        </Breadcrumb>
+
+        <Link to={'/dashboard/add-book'}>
+          <Button>
+            <CirclePlus className="mr-1" />
+            Add Book
+          </Button>
+        </Link>
+      </div>
       <Card>
         <CardContent>
           <Table>
@@ -57,7 +101,7 @@ function Books() {
             </TableHeader>
             <TableBody>
               {books &&
-                books.map((book) => (
+                books.map((book: Book) => (
                   <TableRow key={book._id}>
                     <TableCell className="hidden sm:table-cell">
                       <img
@@ -105,8 +149,8 @@ function Books() {
         </CardContent>
         <CardFooter>
           <div className="text-xs text-muted-foreground">
-            Showing <strong>1</strong> of <strong>{books.length}</strong>{' '}
-            products
+            Showing <strong>1</strong> of todo need
+            <strong>{books?.length}</strong> products
           </div>
         </CardFooter>
       </Card>

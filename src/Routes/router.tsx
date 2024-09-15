@@ -8,11 +8,11 @@ import AddBook from '@/pages/AddBook';
 import Dashboard from '@/layout/Dashboard';
 const router = createBrowserRouter([
   {
-    path: '/',
+    path: '/dashboard',
     element: <Dashboard />,
     children: [
       {
-        path: '/home',
+        path: '/dashboard/home',
         element: (
           <AuthLayout>
             <HomePage />
@@ -20,10 +20,18 @@ const router = createBrowserRouter([
         ),
       },
       {
-        path: '/books',
+        path: '/dashboard/books',
         element: (
           <AuthLayout>
             <Books />
+          </AuthLayout>
+        ),
+      },
+      {
+        path: '/dashboard/add-book',
+        element: (
+          <AuthLayout>
+            <AddBook />
           </AuthLayout>
         ),
       },
