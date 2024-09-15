@@ -6,6 +6,7 @@ import HomePage from '@/pages/HomePage';
 import Books from '@/pages/Books';
 import AddBook from '@/pages/AddBook';
 import Dashboard from '@/layout/Dashboard';
+import UpdateBook from '@/pages/UpdateBook';
 const router = createBrowserRouter([
   {
     path: '/',
@@ -20,6 +21,14 @@ const router = createBrowserRouter([
         element: (
           <AuthLayout>
             <HomePage />
+          </AuthLayout>
+        ),
+      },
+      {
+        path: '/dashboard/edit',
+        element: (
+          <AuthLayout>
+            <UpdateBook />
           </AuthLayout>
         ),
       },

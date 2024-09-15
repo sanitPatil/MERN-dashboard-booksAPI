@@ -39,7 +39,7 @@ import {
 } from '@/components/ui/breadcrumb';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { deleteBook, getAllBooks } from '@/http/api';
-import { Link } from 'react-router-dom';
+import { Link, Navigate, NavLink, useNavigate } from 'react-router-dom';
 import { Skeleton } from '@/components/ui/skeleton';
 export interface Book {
   _id: string;
@@ -63,6 +63,7 @@ function Books() {
   const books = data?.data?.bookRes;
   //console.log(books);
 
+  const navigate = useNavigate();
   // dialog alert
   const [isOpen, setIsOpen] = useState(false);
 
@@ -178,7 +179,10 @@ function Books() {
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
                           <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                          <DropdownMenuItem>Edit</DropdownMenuItem>
+
+                          <NavLink to={'/dashboard/edit'} state={book}>
+                            <DropdownMenuItem>Edit</DropdownMenuItem>
+                          </NavLink>
                           <DropdownMenuItem
                             onSelect={(e) => e.preventDefault()}
                           >

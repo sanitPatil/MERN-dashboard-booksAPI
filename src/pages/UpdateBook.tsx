@@ -24,34 +24,71 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
+import { updateBookData } from '@/http/api';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { LoaderCircle } from 'lucide-react';
 import React from 'react';
+
 import { useForm } from 'react-hook-form';
-import { Link } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { z } from 'zod';
 
 const formSchema = z.object({
   title: z.string().min(2, {
-    message: 'title must have more than 2 characters',
-  }),
-  genre: z.string().min(2, {
-    message: 'genre must have more than 2 characters',
+    message: 'title must be at least 2 character',
   }),
   description: z.string().min(2, {
-    message: 'description must have more than 2 characters',
+    message: 'Description must be at least 2 character',
+  }),
+  genre: z.string().min(2, {
+    message: 'genre must be at least 2 character',
   }),
   coverImage: z.instanceof(FileList).refine((file) => {
     return file.length === 1;
-  }, 'coverImage  is required'),
-
+  }, 'cover image required'),
   file: z.instanceof(FileList).refine((file) => {
     return file.length === 1;
-  }, 'file is required'),
+  }, 'Book File image required'),
 });
 const UpdateBook = () => {
-  const form = useForm();
+  const { state } = useLocation();
+  //console.log(state);
 
-  const updateBook = () => {};
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      title: state.title,
+      genre: state.genre,
+      description: state.description,
+    },
+  });
+
+  const coverRef = form.register('coverImage');
+  const fileRef = form.register('file');
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+
+  const mutation = useMutation({
+    mutationFn: updateBookData,
+    onSuccess: (res) => {
+      if (res.status === 2000) {
+        console.log('update successfully');
+        navigate('/dashboard/books');
+      }
+    },
+  });
+
+  function updateBook(values: z.infer<typeof formSchema>) {
+    const formData = new FormData();
+    formData.append('title', values.title);
+    formData.append('genre', values.genre);
+    formData.append('description', values.description);
+    formData.append('coverImage', values.coverImage[0]);
+    formData.append('file', values.file[0]);
+
+    if (formData) mutation.mutate({ bookid: state._id, data: formData });
+  }
   return (
     <section>
       <Form {...form}>
@@ -82,7 +119,7 @@ const UpdateBook = () => {
                 {mutation.isPending && (
                   <LoaderCircle className="animate-spin" />
                 )}
-                <span className="ml-2">Submit</span>
+                <span className="ml-2">save</span>
               </Button>
             </div>
           </div>
@@ -94,7 +131,7 @@ const UpdateBook = () => {
               </CardDescription>
               {mutation.isError && (
                 <CardDescription className="text-red-700 text-center italic underline font-semibold">
-                  {mutation.error?.response?.data?.message}
+                  {mutation.error.response.data.message}
                 </CardDescription>
               )}
             </CardHeader>

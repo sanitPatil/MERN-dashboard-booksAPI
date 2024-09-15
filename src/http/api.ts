@@ -35,6 +35,8 @@ const register = async (data: {
     .post('/api/v1/users/register', data)
     .catch((error) => error.response.data);
 
+//
+
 // get all books
 const getAllBooks = async () =>
   api.get(`/api/v1/books//get-all-books`).catch((error) => error.response.data);
@@ -53,4 +55,18 @@ const addBook = async (data: FormData) =>
 const deleteBook = async (bookId: string) =>
   api.delete(`api/v1/books/delete-book/${bookId}`).catch((err) => err);
 
-export { login, register, getAllBooks, addBook, deleteBook };
+export interface update {
+  bookid: string;
+  data: FormData;
+}
+const updateBookData = async (variables: update) => {
+  const { bookid, data } = variables;
+  console.log(bookid, data);
+
+  return api.patch(`api/v1/books/update-book/${bookid}`, data, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
+};
+export { login, register, getAllBooks, addBook, deleteBook, updateBookData };
